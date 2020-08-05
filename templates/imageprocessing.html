@@ -1,9 +1,29 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<form action=/upload method=post enctype="multipart/form-data">
-   <h1>크로마키 배경 합성</h1>
-   {{ctx.title}} <br>
-   <p><h5>크로마키 원본 파일:</h5> <input type=file name=file1> </p>
-   <p><h5>배경 파일:</h5> <input type=file name=file2> </p>
-   <br>
-   <input type=submit value="전송">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+제목 : {{ctx.title}} <br>
+
+<form  action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file1" accept="images/*" capture="camera">
+    <input type="submit" value="전송">
 </form>
+
+<button id=img_emboss> 엠보싱 </button> <br>
+<button id=img_sharp> 샤프닝 </button> <br>
+
+<img src="/static/result.jpg" id=result>
+
+<script>
+  $("#img_emboss").click( function() {
+    $.get("/imageprocess?method=emboss",
+      function(data, status) {
+        $("#result").attr("src", "/static/result.jpg?" + new Date() );
+      }
+    );
+  });
+  $("#img_sharp").click( function() {
+      alert('ok2~~~');
+  });
+</script>

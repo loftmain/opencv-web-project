@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 import cv2
 import numpy as np
 import time
@@ -30,7 +30,7 @@ def chromakey_background(img, background):
 
 @app.route('/')
 def index():
-    return render_template("imageprocessing.html", ctx={"title":"영상처리~"})
+    return render_template("imageprocessing.html", ctx={"title":"영상처리"})
 
 @app.route('/upload', methods=["post"])
 def upload():
@@ -52,7 +52,17 @@ def upload():
     cv2.imwrite(filename, img)
 
     now = time.localtime()
-    return "<img src=/static/" + f.filename + "?" + str(now.tm_sec) + ">"
+    return redirect("/")
+
+@app.route('/imageprocess')
+def imageprocess():
+
+    method = request.args.get("method")
+    if method == "emboss":
+        # 엠보싱 연산 opencv code
+        # save result.jpeg 로 항상 static 볼더에 할 수 있음. /static/result.jpg
+        pass
+    return "hello~~"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8000)
