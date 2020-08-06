@@ -3,27 +3,47 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
-제목 : {{ctx.title}} <br>
+제목 : {{ctx.title}} <br> <p>
 
 <form  action="/upload" method="post" enctype="multipart/form-data">
     <input type="file" name="file1" accept="images/*" capture="camera">
     <input type="submit" value="전송">
 </form>
 
-<button id=img_emboss> 엠보싱 </button> <br>
-<button id=img_sharp> 샤프닝 </button> <br>
+<button type=Button value="emboss"> 엠보싱 </button>
+<button type=Button value="sharp"> 샤프닝 </button>
+커널크기<input type=text id=size size=3>
+<button type=button value="blur"> 블러 </button><br>
 
-<img src="/static/result.jpg" id=result>
+<img  id=result width=500>
 
 <script>
+
+  $("#result").attr("src", "/static/result.jpg?" + new Date());
+
+  $("button").click( function() {
+    url = "/imageprocess?method=" + $(this).val();
+
+    if($(this).val() == "blur")
+      url += "&size=" + $("#size").val();
+    console.log(url);
+    $.get(url,
+      function(data, status) {
+        $("#result").attr("src", "/static/result.jpg?" + new Date() );
+      }
+    );
+
+    });
+  /*
   $("#img_emboss").click( function() {
-    $.get("/imageprocess?method=emboss",
+
+  });
+  $("#img_sharp").click( function() {
+    $.get("/imageprocess?method=sharp",
       function(data, status) {
         $("#result").attr("src", "/static/result.jpg?" + new Date() );
       }
     );
   });
-  $("#img_sharp").click( function() {
-      alert('ok2~~~');
-  });
+  */
 </script>

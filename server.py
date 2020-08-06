@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import time
 
+image = None
 app = Flask(__name__)
 
 def chromakey_background(img, background):
@@ -34,34 +35,51 @@ def index():
 
 @app.route('/upload', methods=["post"])
 def upload():
+    global image
+
     f = request.files["file1"]
     filename = "./static/" + f.filename
     f.save(filename)
 
-    f1 = request.files["file2"]
-    filename1 = "./static/" + f1.filename
-    f1.save(filename1)
+    image = cv2.imread(filename)
+    cv2.imwrite("./static/result.jpg", image)
+    print(image.shape)
 
-    img = cv2.imread(filename)
-    img = cv2.resize(img, dsize=(320, 240))
-
-    background = cv2.imread(filename1)
-    background = cv2.resize(background, dsize=(320, 240))
-
-    img = chromakey_background(img, background)
-    cv2.imwrite(filename, img)
-
-    now = time.localtime()
     return redirect("/")
 
 @app.route('/imageprocess')
 def imageprocess():
-
+    global image
     method = request.args.get("method")
     if method == "emboss":
         # 엠보싱 연산 opencv code
         # save result.jpeg 로 항상 static 볼더에 할 수 있음. /static/result.jpg
-        pass
+        emboss = np.array([
+            [-1, -1, 0],
+            [-1, 0, 1],
+            [0, 1, 1]], np.float32)
+
+        dst = cv2.filter2D(image, -1, emboss, delta=128)
+        filename = "./static/" + "result.jpg"
+        cv2.imwrite(filename, np.hstack((image, dst)))
+
+    if method == "blur":
+        size = int(request.args.get("size", 3))
+        dst = cv2.blur(image, (size,size))
+        cv2.imwrite("./static/result.jpg", np.hstack((image, dst)))
+
+    if method == "sharp" :
+        sharp = np.array([
+            [0, -1, 0],
+            [-1, 5, -1],
+            [0, -1, 0]])
+
+        dst = cv2.filter2D(image, -1, sharp)
+        filename = "./static/" + "result.jpg"
+        cv2.imwrite(filename, np.hstack((image, dst)))
+        # image = cv2.imread(filename)
+
+
     return "hello~~"
 
 if __name__ == '__main__':
