@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="10; view"
+<head>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+</head>
+
+<body>
+  <h1> {{ctx.title}} </h1>
+
+  <canvas id="myChart" style="height:300; width:500"></canvas>
+
+</body>
+<script>
+
+<!-- 파라미터 추가 -->
+function addGraph(id, labels, data) {
+
+var ctx = document.getElementById(id);
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: '그래프 테스트',
+            data: data,
+            borderWidth: 1
+        }]
+    },
+    options: {
+      <!-- 반응형 웹으로 하지 않겠다. -->
+      responsive : true,
+    }
+
+
+
+});
+
+}
+
+<!-- 파이썬과 웹이 데이터를 주고받는 방식 -->
+<!-- addGraph("myChart", [&#39;a&#39;, &#39;B&#39;, &#39;C&#39;], [101, 123, 78.2] ); -->
+<!-- html 특수문자를 사용했을 때 변환되는 것을 -->
+addGraph("myChart", {{ctx.labels|safe}}, {{ctx.data|safe}} );
+//addGraph("myChart2", ['가', '나', '다', '라'], [12.7, 10, 65, 32] );
+
+
+</script>
