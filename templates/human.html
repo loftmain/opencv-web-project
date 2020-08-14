@@ -1,0 +1,51 @@
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
+
+보행자 수 Test<br>
+
+<table >
+   <tr>
+     <td><img src=/video_feed width=320 height=240>        </td>
+       <td><canvas id="myChart" style="height:300; width:400"></canvas>     </td>
+   </tr>
+</table>
+
+
+<script>
+
+var ctx = document.getElementById("myChart");
+var config =
+{
+    type: 'line',
+    data: {
+        labels: [1,2,3],
+        datasets: [{
+            label: '보행자 수',
+            data: [1,2,3],
+            borderWidth: 1
+        }]
+    },
+    options: {
+      responsive : false,
+    }
+}
+var myChart = new Chart(ctx, config);
+
+setInterval(function() {
+     $.get('/view',
+            function(data, status) {
+                 json =  JSON.parse(data);
+                 len = json.length;
+                 config.data.labels = new Array[len];
+                 for(i=0;i<len;i++) config.data.labels[i] = i+1;
+                 // config.data.labels = Array.from({length: len}, (v, i) => i);
+                 config.data.datasets[0].data =  json;
+                 myChart.update();
+     });
+}, 3000);
+
+
+</script>
